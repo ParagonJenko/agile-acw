@@ -1,0 +1,23 @@
+html, body {
+    max-width: 100%;
+}
+
+.user-body {
+    background: #C9C9C9;
+}
+
+.form-bottom-text {
+    color: #FF0000;
+}
+
+.nav-background {
+    background-color: #BDEDE0;
+}
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+  }
