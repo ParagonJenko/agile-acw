@@ -1,6 +1,8 @@
 <?php
 namespace appointmentSystem;
 
+use PDO;
+
 class DB
 {
     public function getInstance()
