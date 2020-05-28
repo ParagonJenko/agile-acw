@@ -1,7 +1,11 @@
 <!doctype html>
 <html lang="en">
 
-<?php $title = "Student - Homepage";
+<?php
+
+use appointmentSystem\Appointments;
+
+$title = "Student - Homepage";
 require_once("../../components/head.php"); ?>
 
 <body>
@@ -19,22 +23,23 @@ require_once("../../components/head.php"); ?>
 
             <div class="card-body">
                 <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <p>Appointment with: Health & Wellbeing</p>
-                            <p>When: 15th March 2020</p>
-                            <p>Where: Students Union - Room 1</p>
-                        </div>
-                        <a href="#" class="badge badge-danger p-3"><i class="fas fa-times-circle fa-3x"></i></a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <p>Appointment with: Academic Support Tutor</p>
-                            <p>When: 20th March 2020</p>
-                            <p>Where: Robert Blackburn - Room 211</p>
-                        </div>
-                        <a href="#" class="badge badge-danger p-3"><i class="fas fa-times-circle fa-3x"></i></a>
-                    </li>
+
+                    <?php 
+                        require_once("../../class/Appointments.php"); 
+                        $appointments = Appointments::viewAllMyAppointments();
+
+                        foreach ($appointments as $appointment) {
+                            echo '
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p>Appointment with: '.$appointment[0].'</p>
+                                    <p>When: '.$appointment[1].'</p>
+                                    <p>Where: '.$appointment[2].'</p>
+                                </div>
+                                <a href="#" class="badge badge-danger p-3"><i class="fas fa-times-circle fa-3x"></i></a>
+                            </li>';
+                        }
+                    ?>
                 </ul>
             </div>
 
