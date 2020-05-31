@@ -1,33 +1,82 @@
 <?php 
 namespace appointmentSystem;
 
+require_once("DB.php");
+
 session_start();
+
+use PDO;
+/*
+User DB
+
+Table Name: users
+id - int, pk
+username = varchar(255)
+password = varchar(255)
+role = varchar(20)
+locked_for_verification = bool
+
+*/
+
 
 class User {
     public $role;
-    
-    public $fake_db = array("id" => 1, "username" => "291039", "password" => '$2y$10$et8e3T.vK33s9pEHuv0fm.EPp4MqkpDxNAWjkZ7micYs3lINAYXO2', "role" => "staff");
 
     public function login($username, $password){
-    
-        //sql_query = "SELECT * FROM users WHERE username = ?";
+        $db = new DB;
+        $query = $db->preparedQuery("SELECT * FROM users WHERE username = ?", array($username))->fetch(PDO::FETCH_OBJ);
 
-        if($this->fake_db['username'] == $username){
-            if(password_verify($password, $this->fake_db['password'])){
-                $_SESSION["logged_in"] = true;
-                return true;
+        if($query == null) {
+            return false;
+        }
+        else {
+            if($query->username == $username){
+                if(password_verify($password, $query->password)){
+                    $_SESSION['username'] = $query->username;
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
-
         return false;
     }
 
-    public function verifyLoggedIn(){
-        return ($_SESSION["logged_in"]) ? true : false;
+    public function redirectUsersToIndexs($root){
+        switch($this->verifyRole()){
+            case "smm":
+                header("Location: $root/pages/staff/smm.php");
+                break;
+            case "hwb":
+                header("Location: $root/pages/staff/index.php");
+                break;
+            case "ast":
+                header("Location: $root/pages/staff/index.php");
+                break;
+            case "student":
+                header("Location: $root/pages/student/index.php");
+                break;
+            case "professor":
+                header("Location: $root/pages/staff/index.php");
+                break;
+        }
+    }
+
+    public function verifyLoggedIn(){ 
+        return (isset($_SESSION['username'])) ? true : false;
+    }
+
+    public function verifyRole(){
+        $db = new DB;
+        $query = $db->preparedQuery("SELECT role FROM users WHERE username = ?", array($_SESSION['username']))->fetch(PDO::FETCH_OBJ);
+
+        return ($query->role);
     }
 
     public function logout(){
-        $_SESSION["logged_in"] = false;
+        session_unset();
+        session_destroy();
+        header("Location: user/login.php");
     }
 
     public function changePassword($user_id, $old_password, $new_password){
@@ -42,11 +91,9 @@ class User {
     TODO: Has lack of any way to authenticate user per spec. Maybe just reset to a basic password, or request they go to IT and verify identity?
     */
     public function forgotPassword(){
-        
-    }
+        // Send alert to go to Senior Management to be unlocked.
 
-    public function resetPassword(){
-
+        // UPDATE users SET locked_for_verification = true
     }
 }
 
@@ -61,6 +108,10 @@ class Availability extends User{
 }
 
 class SeniorManagement extends User {
+    public function unlockAccount($account_id){
+        
+    }
+
     /*
     TODO: Will host all call functions to retrieve data for SM.
     */

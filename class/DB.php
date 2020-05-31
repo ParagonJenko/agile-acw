@@ -7,10 +7,13 @@ class DB
 {
     public function getInstance()
     {
-        $server = 'sql.rde.hull.ac.uk';
+        // $server = 'sql.rde.hull.ac.uk';
+        // $connectionInfo = "rde_571875";
+        $server = "127.0.0.1";
         $connectionInfo = "rde_571875";
         try {
-            $conn = new PDO("sqlsrv:Server=$server;Database=$connectionInfo;", "", "");
+            //$conn = new PDO("sqlsrv:Server=$server;Database=$connectionInfo;", "", "");
+            $conn = new PDO("mysql:Server=$server;dbname=$connectionInfo;", "root", "");
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             echo "CONNECTED";
             return $conn;
@@ -31,7 +34,13 @@ class DB
         $conn = $this->getInstance();
         $stmt = $conn->prepare($query);
         $stmt->execute($parameters);
-        return $stmt;
+
+        if($stmt){
+            return $stmt;
+        }
+        else {
+            return null;
+        }
     }
 
     public function getMaxID($table)

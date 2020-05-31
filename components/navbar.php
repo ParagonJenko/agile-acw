@@ -2,7 +2,7 @@
     <div class="row nav-background">
 
         <div class="col-3 p-2">
-            <a href="#" class="btn btn-info btn-lg btn-block"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="../logout.php" class="btn btn-info btn-lg btn-block"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
 
         <div class="col-9 my-auto">

@@ -1,3 +1,7 @@
+<?php 
+namespace appointmentSystem;
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -11,21 +15,7 @@ require_once("../../components/head.php"); ?>
     <div class="row align-items-center justify-content-center vertical-center user-body">
         <div class="card w-50">
             <div class="card-body">
-
-                <form action="#" method="POST">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="login-addon"><i class="fas fa-user"></i></span>
-                        </div>
-                        <input type="email" class="form-control" placeholder="Email Address" aria-label="Email Address" aria-describedby="login-addon">
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-success btn-block">Change my email address!</button>
-                    </div>
-                </form>
-
-                <hr>
-
+            
                 <form action="#" method="POST">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">

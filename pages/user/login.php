@@ -1,8 +1,36 @@
+<?php 
+namespace appointmentSystem;
+?>
+
 <!doctype html>
 <html lang="en">
 
-<?php $title = "Login";
-require_once("../../components/head.php"); ?>
+<?php 
+
+
+$title = "Login";
+require_once("../../components/head.php");
+
+
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    require_once("../../class/User.php");
+
+    $user = new User();
+
+    if($user->login($_POST['user_id'], $_POST['password'])){
+        echo "Logged in.";
+    }
+    else {
+        $alert_type = "danger";
+        $alert_message = "This account does not exist or password incorrect.";
+    }
+
+    if($user->verifyLoggedIn()){
+        $user->redirectUsersToIndexs("../../");
+    }
+}
+
+?>
 
 <body>
 
@@ -10,19 +38,23 @@ require_once("../../components/head.php"); ?>
         <div class="card w-50">
             <div class="card-body">
 
+                <?php 
+                require_once("../../components/alert.php");
+                ?>
+
                 <form action="#" method="POST">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="login-addon"><i class="fas fa-user"></i></span>
                         </div>
-                        <input type="email" class="form-control" placeholder="Email Address" aria-label="Email Address" aria-describedby="login-addon">
+                        <input name="user_id" type="text" class="form-control" placeholder="User ID" aria-label="User ID" aria-describedby="login-addon">
                     </div>
 
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="password-addon"><i class="fas fa-lock"></i></span>
                         </div>
-                        <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
+                        <input name="password" type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
                     </div>
 
                     <div>

@@ -1,6 +1,24 @@
 <?php 
 namespace appointmentSystem;
 
+/*
+Appointments DB
+
+Table Name: appointments
+id - int, pk
+date - date
+start_time - time
+for - int fk
+with - int fk
+cancelled - bool
+
+Table Name: appointment_notes
+id - int, pk
+appointment_id - int, fk
+note - text
+
+*/
+
 class Appointments {
     static function viewAllMyAppointments($user_id){
         // SELECT * FROM appointments WHERE for_id = ?
@@ -31,7 +49,7 @@ class Appointments {
     }
 
     public function acceptAppointment($appointment_id) {
-
+        // UPDATE appointments SET accepted = true WHERE appointment_id = ?
     }
 
     public function requestTimeChangeForAppointment($time_change, $appointment_id) {
@@ -43,6 +61,8 @@ class Appointments {
             return true;
         }
         
+        // SELECT * FROM appointments WHERE for = ?
+
         // TODO: Check all appointments for user
         // Loop through and check start time for both
 
@@ -55,6 +75,9 @@ class Appointments {
 
     public function countCancelledAppointments() {
         // loop through all appointments, count cancelled
+        // SELECT id FROM appointments WHERE cancelled = true;
+
+        // COUNT
     }
 }
 
