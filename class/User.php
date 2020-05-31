@@ -3,7 +3,9 @@ namespace appointmentSystem;
 
 require_once("DB.php");
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 use PDO;
 /*
@@ -79,12 +81,16 @@ class User {
         header("Location: user/login.php");
     }
 
-    public function changePassword($user_id, $old_password, $new_password){
+    public function changePassword($new_password){
+        $password = password_hash($new_password, PASSWORD_DEFAULT);
+        $db = new DB;
+        $query = $db->preparedQuery("UPDATE users SET password = ? WHERE username = ?", array($new_password, $_SESSION['username']));
 
-        if(password_verify($old_password, $this->fake_db['password'])){
-            $password = password_hash($new_password, PASSWORD_DEFAULT);
-            // UPDATE users SET password = ?
+        if(!null){
+            return true;
         }
+        
+        return false;
     }
 
     /*
