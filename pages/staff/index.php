@@ -5,8 +5,27 @@ session_start();
 <!doctype html>
 <html lang="en">
 
-<?php $title = "Staff - Homepage";
-require_once("../../components/head.php"); ?>
+<?php
+
+use appointmentSystem\Appointments;
+
+$title = "Staff - Homepage";
+require_once("../../components/head.php"); 
+
+require_once("../../class/Appointments.php"); 
+require_once("../../class/User.php"); 
+$appointmentsObj = new Appointments;
+
+if(isset($_GET['cancel_appointment']) && isset($_GET['cancel_appointment_id'])){
+    $appointmentsObj->cancelAppointment($_GET['cancel_appointment_id']);
+    header("Refresh:0, url=index.php");
+}
+
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    $appointmentsObj->addAppointment($_POST['date'], $_POST['time'], $_POST['with'], $_SESSION['user_id']);
+}
+
+?>
 
 <body>
 
@@ -23,22 +42,26 @@ require_once("../../components/head.php"); ?>
 
             <div class="card-body">
                 <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <p>Appointment with: Health & Wellbeing</p>
-                            <p>When: 15th March 2020</p>
-                            <p>Where: Students Union - Room 1</p>
-                        </div>
-                        <a href="#" class="badge badge-success p-3"><i class="fas fa-sign-in-alt fa-3x"></i></a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <p>Appointment with: Academic Support Tutor</p>
-                            <p>When: 20th March 2020</p>
-                            <p>Where: Robert Blackburn - Room 211</p>
-                        </div>
-                        <a href="#" class="badge badge-success p-3"><i class="fas fa-sign-in-alt fa-3x"></i></a>
-                    </li>
+
+                    <?php 
+                        
+                        $appointments = $appointmentsObj->viewAllMyAppointments($_SESSION['user_id'], true);
+
+                        foreach ($appointments as $appointment) {
+                            if($appointment->cancelled == 1){
+                                continue;
+                            }
+
+                            echo '
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p>Appointment with: '.$appointmentsObj->switchForDeps($appointment->role).'</p>
+                                    <p>When: '.date("d-m-Y", strtotime($appointment->date)).' @ '.$appointment->start_time.'</p>
+                                </div>
+                                <a href="individual-appointment.php?id='.$appointment->id.'" class="badge badge-info p-3"><i class="fas fa-info-circle fa-3x"></i></a>
+                            </li>';
+                        }
+                    ?>
                 </ul>
             </div>
 
@@ -58,26 +81,38 @@ require_once("../../components/head.php"); ?>
                 <form action="#" method="POST">
                     <div class="form-group">
                         <label for="appointment-with">Appointment with:</label>
-                        <select class="form-control" name="appointment-with">
-                            <option>Senior Management</option>
+                        <select class="form-control" name="with">
+                            <?php 
+                            foreach(User::getAllStudent() as $student){
+                                echo "<option value='".$student->id."'>".$student->forename." ".$student->surname."</option>";
+                            }
+                            ?>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="appointment-time">When</label>
-                        <input type="date" class="form-control" name="appointment-time">
+                    <div class="form-row">
+                        <div class="col-6 form-group">
+                            <label for="appointment-time">When</label>
+                            <input type="date" class="form-control" name="date">
+                        </div>
+
+                        <div class="col-6 form-group">
+                            <label for="appointment-time">When</label>
+                            <input type="time" class="form-control" name="time">
+                        </div>
                     </div>
+                    
 
                     <div>
-                        <button class="btn btn-success btn-block">Search</button>
+                        <button class="btn btn-success btn-block" type="submit">Book Appointment</button>
                     </div>
                 </form>
 
-                <div>
+                <!-- <div>
                     <p class="pb-1 pt-4 px-4">The health & wellbeing team are responsible for...Lorem ipsum dolor sit amet, consectetu ipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</p>
-                </div>
+                </div> -->
 
-                <div class="row w-100">
+                <!-- <div class="row w-100">
 
                     <div class="col-2">
                         <a href="#" class="btn btn-outline-info btn-block">09:00</a>
@@ -98,7 +133,7 @@ require_once("../../components/head.php"); ?>
                         <a href="#" class="btn btn-outline-info btn-block">11:30</a>
                     </div>
 
-                </div>
+                </div> -->
 
             </div>
 

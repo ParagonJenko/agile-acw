@@ -6,7 +6,24 @@ session_start();
 <html lang="en">
 
 <?php $title = "Staff - Individual Appointment";
-require_once("../../components/head.php"); ?>
+require_once("../../components/head.php"); 
+
+require_once("../../class/Appointments.php"); 
+require_once("../../class/User.php"); 
+$appointmentsObj = new Appointments;
+
+$appointment = $appointmentsObj->viewIndividualAppointment($_GET['id']);
+
+if(isset($_GET['cancel_appointment']) && isset($_GET['cancel_appointment_id'])){
+    $appointmentsObj->cancelAppointment($_GET['cancel_appointment_id']);
+    header("Refresh:0, url=index.php");
+}
+
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    $appointmentsObj->addNoteToAppointment($_GET['id'], $_POST['add-notes']);
+    header("Refresh:0");
+}
+?>
 
 <body>
 
@@ -25,10 +42,10 @@ require_once("../../components/head.php"); ?>
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                        <p>Appointment with: Student - Robert Phillips</p>
-                                <a href="#" class="small">See past appointments</a>
+                        <p>Appointment with: <?php echo $appointmentsObj->switchForDeps($appointment->role) . " - " . $appointment->forename . " " . $appointment->surname; ?></p>
+                                <!-- <a href="#" class="small">See past appointments</a> -->
                         </div>
-                        <a href="#" class="badge badge-danger p-3"><i class="fas fa-times-circle fa-3x"></i></a>
+                        <a href="?cancel_appointment=true&cancel_appointment_id=<?php echo $appointment->id ?>" class="badge badge-danger p-3"><i class="fas fa-times-circle fa-3x"></i></a>
                     </li>
                 </ul>
 
@@ -38,7 +55,8 @@ require_once("../../components/head.php"); ?>
 
                         <div class="form-group">
                             <label for="appointment-notes">Appointment Notes</label>
-                            <textarea class="form-control" disabled rows="10">This is where notes on a user will be. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque non consectetur lorem, eget pellentesque elit. Fusce suscipit hendrerit nibh, at convallis erat feugiat at. Duis lorem massa, tempus sit amet luctus vitae, consequat nec arcu. Sed convallis nec enim id convallis. Nunc sed malesuada velit. Proin vel aliquet dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed a convallis nunc, ac maximus turpis. Mauris ante dolor, fringilla vitae dui a, auctor pharetra leo. Suspendisse varius commodo neque tristique placerat. Nulla nec dignissim lectus. Duis dignissim massa mi, id consectetur lacus consequat id. Nulla euismod mauris et tincidunt pharetra. Suspendisse finibus libero at leo finibus laoreet. </textarea>
+                            <textarea class="form-control" disabled rows="10"><?php foreach($appointmentsObj->viewIndividualAppointmentsNotes($_GET['id']) as $note){ echo $note->note . "\n";
+                            } ?> </textarea>
                         </div>
 
                         <div class="form-group">

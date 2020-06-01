@@ -84,8 +84,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                                 echo "<option value='".$staff->id."'>".$role." - ".$staff->forename." ".$staff->surname."</option>";
                             }
                             ?>
-                            
-                            <option value="ast">Academic Support Tutor</option>
                         </select>
                     </div>
 

@@ -110,6 +110,13 @@ class User {
         return $query;
     }
 
+    static function getAllStudent(){
+        $db = new DB;
+        $query = $db->preparedQuery("SELECT id, forename, surname, role FROM users WHERE role = ?", array("student"))->fetchAll(PDO::FETCH_OBJ);
+
+        return $query;
+    }
+
     public function switchForDeps($with){
         switch($with){
             case "smm":

@@ -5,12 +5,41 @@ require_once("DB.php");
 use PDO;
 
 class Appointments {
-    public function viewAllMyAppointments($user_id){
+    public function viewAllMyAppointments($user_id, $is_staff = false){
         // SELECT * FROM appointments WHERE for_id = ?
         $db = new DB;
-        $appointments = $db->preparedQuery("SELECT appointments.*, users.role FROM appointments INNER JOIN users ON users.id = appointments.with  WHERE `for` = ? AND cancelled = 0 ORDER BY date DESC", array($user_id))->fetchAll(PDO::FETCH_OBJ);
+
+        if($is_staff){
+            $inner_join = "for";
+        }
+        else {
+            $inner_join = "with";
+        }
+
+        $appointments = $db->preparedQuery("SELECT appointments.*, users.role, users.forename, users.surname FROM appointments INNER JOIN users ON users.id = appointments.$inner_join  WHERE `for` = ? OR `with` = ? AND cancelled = 0  ORDER BY date DESC", array($user_id, $user_id))->fetchAll(PDO::FETCH_OBJ);
 
         return $appointments;
+    }
+
+    public function viewIndividualAppointment($appointment_id){
+        // SELECT * FROM appointments WHERE for_id = ?
+        $db = new DB;
+
+        $appointments = $db->preparedQuery("SELECT appointments.*, users.role, users.forename, users.surname 
+        FROM appointments 
+        INNER JOIN users ON users.id = appointments.with
+        WHERE appointments.id = ?", array($appointment_id))->fetch(PDO::FETCH_OBJ);
+
+        return $appointments;
+    }
+
+    public function viewIndividualAppointmentsNotes($appointment_id){
+        $db = new DB;
+        $appointments_notes = $db->preparedQuery("SELECT * FROM appointments_notes
+        WHERE appointment_id = ?
+        ", array($appointment_id))->fetchAll(PDO::FETCH_OBJ);
+
+        return $appointments_notes;
     }
 
     public function addAppointment($date, $start_time, $for, $with) {
@@ -57,6 +86,9 @@ class Appointments {
     }
 
     public function addNoteToAppointment($appointment_id, $added_note) {
+        $db = new DB;
+
+        $db->preparedQuery("INSERT INTO appointments_notes (appointment_id, note) VALUES (?, ?) ", array($appointment_id, $added_note));
         // INSERT INTO appointment_notes (appointment_id, note) VALUES (?, ?)
     }
 

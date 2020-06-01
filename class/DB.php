@@ -15,11 +15,11 @@ class DB
             //$conn = new PDO("sqlsrv:Server=$server;Database=$connectionInfo;", "", "");
             $conn = new PDO("mysql:Server=$server;dbname=$connectionInfo;", "root", "");
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "CONNECTED";
+            //echo "CONNECTED";
             return $conn;
         } catch (PDOException $e) {
             $e->getMessage();
-            echo "ERROR";
+           // echo "ERROR";
         }
     }
 
