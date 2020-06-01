@@ -107,9 +107,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                     </div>
                 </form>
 
-                <div>
+                <!-- <div>
                     <p class="pb-1 pt-4 px-4">The health & wellbeing team are responsible for...Lorem ipsum dolor sit amet, consectetu ipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</p>
-                </div>
+                </div> -->
 
                 <!-- <div class="row w-100">
 
