@@ -34,6 +34,7 @@ class User {
         else {
             if($query->username == $username){
                 if(password_verify($password, $query->password)){
+                    $_SESSION['user_id'] = $query->id;
                     $_SESSION['username'] = $query->username;
                     return true;
                 } else {
@@ -100,6 +101,33 @@ class User {
         // Send alert to go to Senior Management to be unlocked.
 
         // UPDATE users SET locked_for_verification = true
+    }
+
+    static function getAllStaff(){
+        $db = new DB;
+        $query = $db->preparedQuery("SELECT id, forename, surname, role FROM users WHERE role != ?", array("student"))->fetchAll(PDO::FETCH_OBJ);
+
+        return $query;
+    }
+
+    public function switchForDeps($with){
+        switch($with){
+            case "smm":
+                return "Senior Management Member";
+                break;
+            case "hwb":
+                return "Health & Wellbeing";
+                break;
+            case "ast":
+                return "Academic Support Tutor";
+                break;
+            case "student":
+                return "Student";
+                break;
+            case "professor":
+                return "Professor";
+                break;
+        }
     }
 }
 

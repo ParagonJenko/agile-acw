@@ -1,47 +1,59 @@
 <?php 
 namespace appointmentSystem;
 
-/*
-Appointments DB
-
-Table Name: appointments
-id - int, pk
-date - date
-start_time - time
-for - int fk
-with - int fk
-cancelled - bool
-
-Table Name: appointment_notes
-id - int, pk
-appointment_id - int, fk
-note - text
-
-*/
+require_once("DB.php");
+use PDO;
 
 class Appointments {
-    static function viewAllMyAppointments($user_id){
+    public function viewAllMyAppointments($user_id){
         // SELECT * FROM appointments WHERE for_id = ?
-
-        $appointments = [
-            ["Health & Wellbeing", "15th March 2020 12:00", "Students Union - Room 1"],
-            ["Academic Support Tutor", "20th March 2020 11:00", "Robert Blackburn - Room 211"],
-        ];
+        $db = new DB;
+        $appointments = $db->preparedQuery("SELECT appointments.*, users.role FROM appointments INNER JOIN users ON users.id = appointments.with  WHERE `for` = ? AND cancelled = 0 ORDER BY date DESC", array($user_id))->fetchAll(PDO::FETCH_OBJ);
 
         return $appointments;
     }
 
     public function addAppointment($date, $start_time, $for, $with) {
-        if(!$this->checkForOverlappingAppointments($start_time)){
-            //INSERT INTO appointments (date, start_time, for, with) VALUES (?, ?, ?, ?)
-        }
-        else {
-            return false;
+        $db = new DB;
+        $query = $db->preparedQuery("INSERT INTO appointments (`date`, start_time, `for`, `with`) VALUES (?, ?, ?, ?)", array($date, $start_time, $for, $with));
+
+        // if(!$this->checkForOverlappingAppointments($start_time)){
+        //     //INSERT INTO appointments (date, start_time, for, with) VALUES (?, ?, ?, ?)
+        // }
+        // else {
+        //     return false;
+        // }
+    }
+    
+    public function switchForDeps($with){
+        switch($with){
+            case "smm":
+                return "Senior Management Member";
+                break;
+            case "hwb":
+                return "Health & Wellbeing";
+                break;
+            case "ast":
+                return "Academic Support Tutor";
+                break;
+            case "student":
+                return "Student";
+                break;
+            case "professor":
+                return "Professor";
+                break;
         }
     }
 
     public function cancelAppointment($appointment_id) {
-        // UPDATE appointments SET cancelled = true WHERE appointment_id = ?
+        $db = new DB;
+
+        if($db->preparedQuery("UPDATE appointments SET cancelled = 1 WHERE id = ?", array($appointment_id))) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public function addNoteToAppointment($appointment_id, $added_note) {
