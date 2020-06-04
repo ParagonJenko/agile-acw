@@ -2,13 +2,13 @@
 namespace appointmentSystem;
 
 use PDO;
+use PDOException;
 
 class DB
 {
     public function getInstance()
     {
-        // $server = 'sql.rde.hull.ac.uk';
-        // $connectionInfo = "rde_571875";
+        //$server = 'sql.rde.hull.ac.uk';
         $server = "127.0.0.1";
         $connectionInfo = "rde_571875";
         try {
@@ -18,8 +18,8 @@ class DB
             //echo "CONNECTED";
             return $conn;
         } catch (PDOException $e) {
-            $e->getMessage();
-           // echo "ERROR";
+
+            echo "ERROR " . $e->getMessage();
         }
     }
 

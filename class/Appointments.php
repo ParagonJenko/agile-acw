@@ -21,6 +21,17 @@ class Appointments {
         return $appointments;
     }
 
+    public function viewAllAppointments(){
+        // SELECT * FROM appointments WHERE for_id = ?
+        $db = new DB;
+        $inner_join = "with";
+
+        $appointments = $db->preparedQuery("SELECT appointments.*, users.role, users.forename, users.surname 
+        FROM appointments INNER JOIN users ON users.id = appointments.$inner_join ORDER BY date DESC", array())->fetchAll(PDO::FETCH_OBJ);
+
+        return $appointments;
+    }
+
     public function viewIndividualAppointment($appointment_id){
         // SELECT * FROM appointments WHERE for_id = ?
         $db = new DB;
@@ -117,11 +128,14 @@ class Appointments {
         // UPDATE appointments SET with = ? WHERE id = ?
     }
 
-    public function countCancelledAppointments() {
-        // loop through all appointments, count cancelled
-        // SELECT id FROM appointments WHERE cancelled = true;
+    public function getCancelledAppointments() {
+        $db = new DB;
 
-        // COUNT
+        $cancelled = $db->preparedQuery("SELECT appointments.*, users.role, users.forename, users.surname FROM appointments
+        INNER JOIN users ON users.id = appointments.with
+        WHERE cancelled = ?", array(1));
+
+        return $cancelled;
     }
 }
 

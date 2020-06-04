@@ -11,12 +11,12 @@ namespace appointmentSystem;
 $title = "Login";
 require_once("../../components/head.php");
 
-
 if($_SERVER['REQUEST_METHOD'] == "POST"){
+    
     require_once("../../class/User.php");
-
+   
     $user = new User();
-
+    
     if($user->login($_POST['user_id'], $_POST['password'])){
         echo "Logged in.";
     }

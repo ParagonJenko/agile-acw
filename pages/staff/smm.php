@@ -1,5 +1,7 @@
-<?php 
+<?php
+
 namespace appointmentSystem;
+
 session_start();
 ?>
 <!doctype html>
@@ -7,29 +9,11 @@ session_start();
 
 <?php $title = "Staff - SMM";
 require_once("../../components/head.php");
-if (!isset($_GET['department'])) {
-    $appointment_department = "AST";
-} else {
-    $appointment_department = $_GET['department'];
-}
 
-// Open/In Progress/Closed/Cancelled
-switch ($appointment_department) {
-    case "AST":
-        $data = "[3, 2, 10, 5]";
-        break;
-    case "Health-Wellbeing":
-        $data = "[5, 4, 16, 1]";
-        break;
-    case "Professor":
-        $data = "[0, 1, 8, 2]";
-        break;
-    case "Senior-Management":
-        $data = "[2, 1, 4, 1]";
-        break;
-    default:
-        break;
-}
+require_once("../../class/Appointments.php");
+$appointmentObj = new Appointments;
+
+$all_appointments = $appointmentObj->viewAllAppointments();
 ?>
 
 <body>
@@ -46,26 +30,44 @@ switch ($appointment_department) {
             </div>
 
             <div class="card-body">
-                <div class="float-right">
-                    <form action="#" method="get">
-                        <select class="form-control" name="appointment-department" id="appointment-department">
-                            <option selected value="<?php echo $appointment_department; ?>">Selected: <?php echo $appointment_department; ?></option>
-                            <option value="AST">AST</option>
-                            <option value="Health-Wellbeing">Health & Wellbeing</option>
-                            <option value="Professor">Professor</option>
-                            <option value="Senior-Management">Senior Management</option>
-                        </select>
-                    </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">1</th>
+                            <th scope="col">Date & Time</th>
+                            <th scope="col">With</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Cancelled</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        foreach($all_appointments as $appointment){
+                            if($appointment->cancelled == 1){
+                                $cancelled = "<span class='bg-danger text-white'>Cancelled</span>";
+                            }
+                            else {
+                                $cancelled = "Not Cancelled";
+                            }
+                            
+                            $role = $appointmentObj->switchForDeps($appointment->role);
 
-                    <script>
-                        document.getElementById('appointment-department').addEventListener('change', function() {
-                            window.location = '?department=' + this.value;
-                            console.log('You selected: ', this.value);
-                        });
-                    </script>
+                            echo '
+                            <tr>
+                                <th scope="row">'.$appointment->id.'</th>
+                                <td>'.$appointment->date.' @ '.$appointment->start_time.'</td>
+                                <td>'.$appointment->forename.' '.$appointment->surname.'</td>
+                                <td>'.$role.'</td>
+                                <td>'.$cancelled.'</td>
+                            </tr>
+                            ';
+                        }
+                        ?>
+                    </tbody>
+                </table>
+                <?php
 
-                </div>
-                <canvas id="myChart"></canvas>
+                ?>
             </div>
 
             <div class="card-footer">
@@ -78,33 +80,6 @@ switch ($appointment_department) {
 
     <?php require_once("../../components/scripts.php"); ?>
 
-    <script>
-        var ctx = document.getElementById('myChart');
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Open', 'In Progress', 'Closed', 'Cancelled'],
-                datasets: [{
-                    label: '# of Appointments',
-                    data: <?php echo $data; ?>,
-                    backgroundColor: [
-                        'rgba(191, 191, 63, 0.2)',
-                        'rgba(191, 127, 63, 0.2)',
-                        'rgba(63, 191, 63, 0.2)',
-                        'rgba(191, 63, 63, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(191, 191, 63, 1)',
-                        'rgba(191, 127, 63, 1)',
-                        'rgba(63, 191, 63, 1)',
-                        'rgba(191, 63, 63, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {}
-        });
-    </script>
 
 </body>
 

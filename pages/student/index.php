@@ -48,6 +48,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                         $appointments = $appointmentsObj->viewAllMyAppointments($_SESSION['user_id']);
 
                         foreach ($appointments as $appointment) {
+                            if($appointment->cancelled == 1){
+                                continue;
+                            }
+
                             echo '
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
@@ -135,7 +139,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             </div>
 
             <div class="card-footer">
-                <a href="#" class="btn btn-success float-right">Request Appointment</a>
+                <!-- <a href="#" class="btn btn-success float-right">Request Appointment</a> -->
             </div>
 
         </div>
